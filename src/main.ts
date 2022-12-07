@@ -4,7 +4,6 @@ import path from "node:path";
 import fs from "node:fs"
 dotenv.config();
 
-const TOKEN = process.env.DISCORD_TOKEN;
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -28,4 +27,4 @@ eventFiles.forEach(async file => {
   }
 })
 
-client.login(TOKEN);
+client.login(process.env.DISCORD_TOKEN);
