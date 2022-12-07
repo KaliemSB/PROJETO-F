@@ -5,7 +5,7 @@
   "author": "KaliemSB <mycael590@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "tsnd -r tsconfig-paths/register ./src/main.ts --transpile-only"
+    "dev": "tsnd -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts --ignore-watch node_modules"
   },
   "devDependencies": {
     "@types/node": "^18.11.11",

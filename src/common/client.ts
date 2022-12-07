@@ -3,6 +3,13 @@ import { Command, Event } from "@common/types";
 import path from "node:path";
 import { readdirSync } from "node:fs";
 
+declare module "discord.js" {
+	interface Client {
+		commands: Collection<string, Command>;
+		events: Collection<string, Event>;
+	}
+}
+
 export class ExtendedClient extends Client {
 	public commands: Collection<string, Command> = new Collection();
 	public events: Collection<string, Event> = new Collection();
@@ -44,7 +51,7 @@ export class ExtendedClient extends Client {
 			if (event.once) {
 				this.once(event.name, (...args) => event.execute(...args));
 			} else {
-				this.on(event.name, (...args) => event.execute(...args));
+				this.on(event.name, event.execute.bind(null, this));
 			}
 
 			this.events.set(file.replace(".ts", ""), event);
