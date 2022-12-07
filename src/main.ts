@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 new ExtendedClient({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildVoiceStates,
-  ],
-}).init()
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildVoiceStates,
+	],
+}).init();
