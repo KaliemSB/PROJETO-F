@@ -49,9 +49,9 @@ export class ExtendedClient extends Client {
 			const event: Event = await import(`${eventsPath}/${file}`);
 
 			if (event.once) {
-				this.once(event.name, (...args) => event.execute(...args));
+				this.once(event.name, event.execute.bind(event.execute));
 			} else {
-				this.on(event.name, event.execute.bind(null, this));
+				this.on(event.name, event.execute.bind(event.execute));
 			}
 
 			this.events.set(file.replace(".ts", ""), event);
