@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, ClientEvents } from "discord.js";
 
 export interface Command {
-	execute(...any: any[]): Promise<void>;
+	execute(...any: any[]): Promise<any>;
 	data: SlashCommandBuilder;
 }
 
