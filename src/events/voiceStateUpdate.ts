@@ -1,49 +1,49 @@
 import {
 	Events,
 	VoiceState,
-	GuildMember,
 	ChannelType,
 	Collection,
 	VoiceBasedChannel,
-	GuildBasedChannel,
-	CategoryChannel,
-	GuildChannelManager,
 } from "discord.js";
 import { Utils } from "@common/utils";
 import { Event } from "@common/types";
 
-const VOICE_AUTOCLONE_CHANNEL = "geral";
-const VOICE_AUTOCLONE_CATEGORY = "canais de voz";
+const VOICE_AUTOCLONE_CATEGORY = "1049396541258993747";
+const CHANNELS_QUANTITY_KEEP = 1
+const AUTOCLONE_CHANNEL_NAME = 'Geral'
 
 export = {
 	name: Events.VoiceStateUpdate,
 	once: false,
 	async execute(voiceState: VoiceState): Promise<void> {
-		console.log(voiceState);
+		const { client } = voiceState;
 
-		// const { client } = voiceState;
-		// const utils = new Utils(client)
+		const utils = new Utils(client)
+		const guild = await utils.fetchUpdatedGuild()
 
-		// const guild = await utils.fetchUpdatedGuild()
+		const category = await guild.channels.fetch(VOICE_AUTOCLONE_CATEGORY)
 
-		// const voiceAutocloneChannels: Collection<string, GuildBasedChannel> = guild.channels.cache
-		//   .filter(channel => channel.type === ChannelType.GuildVoice && channel.name.toLowerCase().startsWith(VOICE_AUTOCLONE_CHANNEL))
+		if (category?.type === ChannelType.GuildCategory) {
+			const GuildChannelManager = guild.channels;
 
-		// const hasMemberInVoiceChannels = voiceAutocloneChannels.every(c => c.isVoiceBased() ? c.members.size > 0 : false)
+			const voiceChannels = category.children.cache.filter(channel => channel.isVoiceBased()) as Collection<string, VoiceBasedChannel>
 
-		// if (hasMemberInVoiceChannels) {
-		//   const GuildChannelManager = guild.channels;
+			const hasAllVoiceChannelsFilled = voiceChannels.every(channel => channel.members.size > 0)
 
-		//   const autocloneChannelsCategory = client.channels.cache
-		//     .find(channel => channel.type === ChannelType.GuildCategory && channel.name.toLowerCase().startsWith(VOICE_AUTOCLONE_CATEGORY))
+			if (hasAllVoiceChannelsFilled) {
+				await GuildChannelManager?.create({
+					name: AUTOCLONE_CHANNEL_NAME,
+					type: ChannelType.GuildVoice,
+					parent: category?.id,
+				});
+			}
 
-		//   console.log(autocloneChannelsCategory)
+			const emptyVoiceChannelsIds = voiceChannels
+				.filter(channel => channel.members.size === 0)
+				.map(channel => channel.id)
+				.slice(CHANNELS_QUANTITY_KEEP)
 
-		//   await GuildChannelManager?.create({
-		//     name: "Geral",
-		//     type: ChannelType.GuildVoice,
-		//     parent: autocloneChannelsCategory?.id,
-		//   });
-		// }
+			await Promise.all(emptyVoiceChannelsIds.map((id) => GuildChannelManager?.delete(id)))
+		}
 	},
 } as Event;
